@@ -11,7 +11,7 @@ from frontend.forms.scales.soba_recomendation import show_soba
 
 def show_sidebar():
     with st.sidebar:
-        if st.button("➗Алгоритм расчета анестезиологического риска", use_container_width=True):
+        if st.button("➗ Алгоритм расчета анестезиологического риска", use_container_width=True):
             st.session_state["stage"] = 0
 
 
