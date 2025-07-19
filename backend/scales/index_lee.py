@@ -5,7 +5,7 @@ def lee_score_and_risk(
         cva_or_tia: bool = False,
         diabetes_on_insulin: bool = False,
         creatinine_elevated: bool = False
-) -> tuple[int, float]:
+) -> tuple[int, str]:
     """
     Расчёт индекса Ли (Revised Cardiac Risk Index, RCRI) и оценка вероятности осложнений.
 
@@ -36,4 +36,4 @@ def lee_score_and_risk(
     else:  # score >= 3
         risk_percent = 11.0
 
-    return score, risk_percent
+    return score, f"{risk_percent} %"

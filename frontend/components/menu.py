@@ -8,7 +8,11 @@ from backend.scales.ariscat import check_ariscat
 from backend.scales.caprini import caprini_score_and_risk
 from backend.scales.el_ganzouri import check_elganzouri
 from backend.scales.index_lee import lee_score_and_risk
-from backend.scales.soba_recomendation import is_high_soba_risk, stopbang_score, calculate_bmi
+from backend.scales.obesity import calculate_bmi, calculate_idmt, calculate_tmt, calculate_cmt
+from backend.scales.soba_recomendation import is_high_soba_risk, stopbang_score
+from frontend.components.diagnostic import show_diagnostic
+from frontend.components.report import show_characteristics_of_body_weight
+from frontend.components.scales import show_an_ream_risk
 
 
 def show_button_down():
@@ -28,6 +32,8 @@ def prev_router():
 
 
 def check_scales():
+    gender = "man" if st.session_state.patient_data["Пол"] == "Муж" else "woman"
+
     caprini = caprini_score_and_risk(
         {k: v for k, v in st.session_state.patient_data.items() if "Caprini" in k}
     )
@@ -51,19 +57,20 @@ def check_scales():
         st.session_state.patient_data["ARISCAT_Длительность"],
         st.session_state.patient_data["ARISCAT_Экстренная"] != "Нет (0 баллов)",
     )
-    bmi = calculate_bmi(
-        st.session_state.patient_data["Рост"],
-        st.session_state.patient_data["Вес"],
-    )
+    bmi = calculate_bmi(st.session_state.patient_data["Рост"], st.session_state.patient_data["Вес"], )
+    idmt = calculate_idmt(st.session_state.patient_data["Рост"], gender)
+    tmt = calculate_tmt(st.session_state.patient_data["Вес"], bmi[0], gender)
+    cmt = calculate_cmt(st.session_state.patient_data["Вес"], idmt)
 
     stopbang = stopbang_score(
         st.session_state.patient_data["STOPBANG_Храп"],
         st.session_state.patient_data["STOPBANG_Сонливость"],
         st.session_state.patient_data["STOPBANG_Апноэ"],
         st.session_state.patient_data["STOPBANG_Давление"],
-        bmi,
+        bmi[0],
         st.session_state.patient_data["Возраст"],
-        st.session_state.patient_data["STOPBANG_Шея"]
+        st.session_state.patient_data["STOPBANG_Шея"],
+        gender
     )
     soba = is_high_soba_risk(
         st.session_state.patient_data["SOBA_Функция"],
@@ -79,50 +86,21 @@ def check_scales():
     st.session_state["scales"]["lee"] = lee
     st.session_state["scales"]["ariscat"] = ariscat
     st.session_state["scales"]["bmi"] = bmi
+    st.session_state["scales"]["idmt"] = idmt
+    st.session_state["scales"]["tmt"] = tmt
+    st.session_state["scales"]["cmt"] = cmt
     st.session_state["scales"]["stopbang"] = stopbang
     st.session_state["scales"]["soba"] = soba
 
 
 def show_scales():
-    st.header("🧮 Расчёт шкал")
     check_scales()
-    with st.expander("🧾 Общие сведения о пациенте"):
-        st.markdown(f"**ФИО:** {st.session_state.patient_data.get('ФИО', '—')}")
-        st.markdown(f"**Возраст:** {st.session_state.patient_data.get('Возраст', '—')} лет")
-        st.markdown(f"**Пол:** {st.session_state.patient_data.get('Пол', '—')}")
-        st.markdown(f"**Рост:** {st.session_state.patient_data.get('Рост', '—')} см")
-        st.markdown(f"**Вес:** {st.session_state.patient_data.get('Вес', '—')} кг")
 
-    with st.expander("🩸 Шкала **Caprini** (венозные тромбозы)"):
-        score, risk = st.session_state.scales["caprini"]
-        st.metric(label="Сумма баллов", value=score)
-        st.markdown(f"**Риск:** {risk}")
+    show_characteristics_of_body_weight()
 
-    with st.expander("🫁 Шкала **El-Ganzouri** (интубация)"):
-        score, risk = st.session_state.scales["elganzouri"]
-        st.metric(label="Сумма баллов", value=score)
-        st.markdown(f"**Риск сложной интубации:** {risk}")
+    show_an_ream_risk()
 
-    with st.expander("❤️ Шкала **Lee** (сердечно-сосудистые осложнения)"):
-        score, risk = st.session_state.scales["lee"]
-        st.metric(label="Сумма баллов", value=score)
-        st.markdown(f"**Риск:** {risk}")
-
-    with st.expander("🫁 Шкала **ARISCAT** (респираторные осложнения)"):
-        score, risk = st.session_state.scales["ariscat"]
-        st.metric(label="Сумма баллов", value=score)
-        st.markdown(f"**Риск:** {risk}")
-
-    with st.expander("⚖️ Индекс **ИМТ** (BMI)"):
-        st.metric(label="Индекс массы тела", value=round(st.session_state.scales["bmi"], 2))
-
-    with st.expander("😴 Шкала **STOPBANG**"):
-        score = st.session_state.scales["stopbang"]
-        st.metric(label="Сумма баллов", value=score)
-
-    with st.expander("💥 Шкала **SOBA**"):
-        result = st.session_state.scales["soba"]
-        st.markdown("**Риск осложнений:** " + ("Высокий" if result else "Низкий"))
+    show_diagnostic()
 
     load_docx()
 
@@ -166,7 +144,8 @@ def load_docx():
     add_scale(document, "El-Ganzouri", scales.get("elganzouri"))
     add_scale(document, "Lee", scales.get("lee"))
     add_scale(document, "ARISCAT", scales.get("ariscat"))
-    add_scale(document, "Индекс массы тела (BMI)", round(scales.get("bmi", 0), 2))
+    add_scale(document, "Индекс массы тела (BMI)", round(
+        scales.get("bmi", [24.9, "Нормальная масса тела"])[0], 2))
     add_scale(document, "STOP-BANG", scales.get("stopbang"))
     add_scale(document, "SOBA", scales.get("soba"))
 

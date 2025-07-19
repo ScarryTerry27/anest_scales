@@ -1,18 +1,6 @@
 from typing import Literal
 
 
-def calculate_bmi(height_cm: int, weight_kg: int) -> float:
-    """
-    Расчёт индекса массы тела (Body Mass Index).
-
-    :param height_cm: Рост в сантиметрах
-    :param weight_kg: Вес в килограммах
-    :return: BMI = вес (кг) / (рост (м))²
-    """
-    height_m = height_cm / 100
-    return round(weight_kg / (height_m ** 2), 2)
-
-
 def stopbang_score(
         snoring: bool = False,
         daytime_sleepiness: bool = False,

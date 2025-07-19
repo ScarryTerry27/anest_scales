@@ -11,7 +11,8 @@ def show_main_info():
     with st.form("MAIN_PATIENT"):
         name = st.text_input("👤 ФИО", value=st.session_state.patient_data.get("ФИО", ""))
         age = st.number_input(
-            "🎂 Возраст", min_value=0,
+            "🎂 Возраст",
+            min_value=0,
             max_value=120,
             value=st.session_state.patient_data.get("Возраст", 30)
         )

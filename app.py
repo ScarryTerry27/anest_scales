@@ -11,7 +11,7 @@ from frontend.forms.scales.soba_recomendation import show_soba
 
 def show_sidebar():
     with st.sidebar:
-        if st.button("➗ Алгоритм расчета анестезиологического риска", use_container_width=True):
+        if st.button("➗ anest-obesity", use_container_width=True):
             st.session_state["stage"] = 0
 
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     if "scales" not in st.session_state:
         st.session_state["scales"] = {}
     if "patient_data" not in st.session_state:
-        st.session_state.patient_data = {}
+        st.session_state["patient_data"] = {}
     st.set_page_config(page_title="Осмотр пациента", layout="wide")
     show_sidebar()
     stages[st.session_state["stage"]]()
