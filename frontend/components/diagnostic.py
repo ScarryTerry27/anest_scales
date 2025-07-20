@@ -6,7 +6,11 @@ from backend.logic.recomendations import generate_diagnostic
 def show_diagnostic():
     """Отображает диагностические данные пациента с учетом шкалы Caprini."""
 
-    base_text = generate_diagnostic(st.session_state.scales["caprini"][0], st.session_state.scales["caprini"][1])
+    base_text = generate_diagnostic(
+        st.session_state.scales["caprini"][0],
+        st.session_state.scales["caprini"][1],
+        soba_recommendation=st.session_state.scales["soba"]
+    )
 
     # Отображение в Streamlit
     with st.expander("🧾 Рекомендованная диагностика пациента"):
