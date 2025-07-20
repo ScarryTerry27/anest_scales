@@ -25,7 +25,7 @@ def show_soba():
         )
 
         co2 = st.checkbox(
-            "🧪 Уровень CO₂ (мм рт. ст.) > 28",
+            "🧪 Уровень HCO₃⁻ (мм рт. ст.) > 28",
             value=st.session_state.patient_data.get("SOBA_CO2", False)
         )
 
