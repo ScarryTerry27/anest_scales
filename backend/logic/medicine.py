@@ -95,12 +95,91 @@ def get_medicine_dose_table(tmt: float, cmt: float) -> list[dict]:
 
 def get_parameters_ivl(idmt: float, intubation: str):
     ventilation_settings = {
-        "intubation": intubation,
+        "Интубация": intubation,
         "DO": round(6 * idmt, 2),
         "FiO2": "< 0.8 (как можно ниже).",
-        "PEEP": "8-15 мбар, при необходимости увеличить, но т.о., чтобы движущее давление (ДР) не превышало 15 мбар",
-        "Pplato": "По возможности, ≤ 30 мбар.",
-        "Recruitment": "Периодические маневры рекрутирования. У больных с ожирением - 50 мбар.",
-        "PaCO2": "Нормокапния за счет регулирования частоты."
+        "PEEP": "8-15 мбар, при необ-ти увеличить, но т.о., чтобы движущее давление ΔP ≤ 15 мбар",
+        "Pplato": "По возможности ≤ 30 мбар.",
+        "ЧДД": "12-16, регулируется по etCO^2 35-50 мм рт. ст.",
     }
     return ventilation_settings
+
+
+def get_medicine_data_induction(name: Literal["propofol", "rocuronium", "succinylcholine", "ketamine"]) -> dict:
+    """
+    Retrieve the medicine data from the session state.
+    """
+
+    dictionary = {
+        "propofol": {"parameters": "tmt", "doza": 2.0, "unit": "мг"},
+        "rocuronium": {"parameters": "tmt", "doza": 0.6, "unit": "мг"},
+        "succinylcholine": {"parameters": "idmt", "doza": 1.5, "unit": "мг"},
+        "ketamine": {"parameters": "cmt", "doza": 2.0, "unit": "мг"},
+    }
+    return dictionary[name]
+
+
+def get_medicine_data_infusion(name: Literal["propofol"]) -> dict:
+    """
+    Retrieve the medicine data from the session state.
+    """
+
+    dictionary = {
+        "propofol": {"parameters": "tmt", "doza": 9, "unit": "мг/ч"},
+    }
+    return dictionary[name]
+
+
+def get_medicine_end_operation(name: Literal["propofol"]) -> dict:
+    """
+    Retrieve the medicine data from the session state.
+    """
+
+    dictionary = {
+        "neostigmine": {"parameters": "cmt", "doza": 0.07, "unit": "мг"},
+        "paracetamol": {"parameters": "tmt", "doza": 15.0, "unit": "мг"},
+    }
+    return dictionary[name]
+
+
+def get_induction_dose(idmt: float, tmt: float, cmt: float) -> list[dict]:
+    """
+    Return the induction dose for propofol.
+    - пропофол: 2 мг/кг для индукции, 1 мг/кг/ч для поддержания
+    Рокуроний: 0.6 мг/кг
+    Сукцинилхлорид: 1.0 мг/кг
+    Кетамин: 1.0 мг/кг
+    """
+
+    medicines = ["propofol", "rocuronium", "succinylcholine", "ketamine"]
+    result = []
+    for med in medicines:
+        med_data = get_medicine_data_induction(med)
+        weight = idmt if med_data["parameters"] == "idmt" else tmt if med_data["parameters"] == "tmt" else cmt
+        dose = f"{med_data['doza'] * weight:.2f}"
+        result.append({"medicine": med, "dose": dose, "unit": med_data["unit"]})
+    return result
+
+
+def get_infusion_dose(idmt: float, tmt: float, cmt: float) -> list[dict]:
+    medicines = ["propofol"]
+    result = []
+    for med in medicines:
+        med_data = get_medicine_data_infusion(med)
+        weight = idmt if med_data["parameters"] == "idmt" else tmt if med_data["parameters"] == "tmt" else cmt
+        dose = f"{med_data['doza'] * weight:.2f}"
+        result.append({"medicine": med, "dose": dose, "unit": med_data["unit"]})
+    return result
+
+
+def get_end_operation_dose(idmt: float, tmt: float, cmt: float) -> list[dict]:
+    """Максимальная доза: 0,07 мг/кг внутривенно или до 5 мг внутривенно, в зависимости от того, какая доза меньше
+"""
+    medicines = [("neostigmine", 5), ("paracetamol", 1000)]
+    result = []
+    for med in medicines:
+        med_data = get_medicine_end_operation(med[0])
+        weight = idmt if med_data["parameters"] == "idmt" else tmt if med_data["parameters"] == "tmt" else cmt
+        dose = f"{med_data['doza'] * weight:.2f}"
+        result.append({"medicine": med[0], "dose": min((float(dose), med[1])), "unit": med_data["unit"]})
+    return result

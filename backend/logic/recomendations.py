@@ -1,14 +1,21 @@
-def generate_diagnostic(caprini_score: float, caprini_risk: str, soba_recommendation: bool) -> str:
+def generate_diagnostic(soba_recommendation: bool) -> str:
     """
     Генерирует рекомендации по шкале Каприни на основе данных из сессии.
     Возвращает текст с рекомендациями.
     """
+    base_text = ""
+    if soba_recommendation:
+        file_path = f"backend/texts/soba.md"
+        with open(file_path, "r", encoding="utf-8") as file:
+            base_text += file.read()
+    if not base_text:
+        base_text = "### 🧾 Стандартное обследование пациента\n\n"
+    return base_text
 
-    # Начальный текст
-    base_text = (
-        f"### 💡 Уровень риска ВТЭО: **{caprini_risk}**  \n"
-        f"**Сумма баллов:** {caprini_score}\n\n"
-    )
+
+def generate_recommendations(caprini_risk: str) -> str:
+    # Словарь соответствий файла уровням риска
+    base_text = ""
 
     # Словарь соответствий файла уровням риска
     dictionary_files = {
@@ -23,8 +30,4 @@ def generate_diagnostic(caprini_score: float, caprini_risk: str, soba_recommenda
     with open(file_path, "r", encoding="utf-8") as file:
         base_text += file.read()
 
-    if soba_recommendation:
-        file_path = f"backend/texts/items.txt"
-        with open(file_path, "r", encoding="utf-8") as file:
-            base_text += file.read()
     return base_text

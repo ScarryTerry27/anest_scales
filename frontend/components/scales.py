@@ -7,7 +7,7 @@ def show_an_ream_risk():
 
     with st.expander("🧮 Оценка анестезиолого-операционного риска"):
         data = {
-            "Шкала": [
+            "Показатель": [
                 "Риск ВТЭО",
                 "Риск сердечно сосудистых осложнений",
                 "Риск послеоперационных легочных осложнений",
@@ -17,10 +17,9 @@ def show_an_ream_risk():
             ],
             "Интерпретация": [
                 st.session_state.scales["caprini"][1],
-                st.session_state.scales["lee"][1],
-                f"{st.session_state.scales["ariscat"][1][0]}, "
-                f"{st.session_state.scales["ariscat"][1][1]} %",
-                st.session_state.scales["elganzouri"][1],
+                st.session_state.scales["lee"][1][1],
+                f"{st.session_state.scales["ariscat"][1][0]}",
+                st.session_state.scales["elganzouri"][1][1],
                 ["Высокий", "Низкий"][st.session_state.scales["stopbang"] <= 5],
                 ["Низкий", "Высокий"][st.session_state.scales["soba"]]
             ],
@@ -31,7 +30,8 @@ def show_an_ream_risk():
                 st.session_state.scales["elganzouri"][0],
                 st.session_state.scales["stopbang"],
                 "-"
-            ]
+            ],
+            "Шкала": ["Caprini", "Lee", "ARISCAT", "El Ganzouri", "STOP-BANG", "SOBA"]
         }
 
         # Преобразуем в таблицу

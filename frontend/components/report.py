@@ -8,10 +8,7 @@ def show_characteristics_of_body_weight():
             bmi_value = round(st.session_state.scales['bmi'][0], 2)
             bmi_text = st.session_state.scales['bmi'][1]
             color = "red" if bmi_value >= 30 else "green"
-            st.markdown(
-                f"**Индекс массы тела (BMI)</span>",
-                unsafe_allow_html=True
-            )
+            st.markdown("**Индекс массы тела (BMI)**")
             st.markdown(
                 f"<span style='color:{color}; font-weight:bold;'>{bmi_value} кг/м^2</span>",
                 unsafe_allow_html=True

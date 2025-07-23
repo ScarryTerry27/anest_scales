@@ -13,7 +13,7 @@ from backend.scales.soba_recomendation import is_high_soba_risk, stopbang_score
 from frontend.components.diagnostic import show_diagnostic
 from frontend.components.report import show_characteristics_of_body_weight
 from frontend.components.scales import show_an_ream_risk
-from frontend.components.treatment import show_treatment, show_ivl
+from frontend.components.treatment import show_treatment, show_ivl, show_recommendations_pp
 
 
 def show_button_down():
@@ -106,6 +106,8 @@ def show_scales():
     show_treatment()
 
     show_ivl()
+
+    show_recommendations_pp()
 
     load_docx()
 

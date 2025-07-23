@@ -25,7 +25,7 @@ def check_ariscat(old: int, spo2: int, resp_inf: bool, anemia: bool, hir_razrez:
         "Низкий": (0, 1.6),
 
     }
-    result = (0, 0)
+    result = ("Низкий", 0)
     for k, v in risk_dicti.items():
         if score > v[0]:
             result = (k, v[1])
