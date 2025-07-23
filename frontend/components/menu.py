@@ -109,9 +109,6 @@ def show_scales():
 
     show_recommendations_pp()
 
-    load_docx()
-
-
 def load_docx():
     patient = st.session_state.patient_data
     scales = st.session_state.scales
