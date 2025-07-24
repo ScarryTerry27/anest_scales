@@ -17,6 +17,7 @@ def show_sidebar():
 
 if __name__ == "__main__":
     stages = {
+        # 0: show_start_page,
         0: show_main_info,
         1: show_el_ganzuri,
         2: show_arescat,
@@ -32,7 +33,7 @@ if __name__ == "__main__":
         st.session_state["scales"] = {}
     if "patient_data" not in st.session_state:
         st.session_state["patient_data"] = {}
-    st.set_page_config(page_title="Осмотр пациента", layout="wide")
+    st.set_page_config(page_title="Осмотр пациента", layout="wide", page_icon="frontend/static/start_image.jpg")
     show_sidebar()
     stages[st.session_state["stage"]]()
 
