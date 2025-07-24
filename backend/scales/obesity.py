@@ -47,3 +47,26 @@ def calculate_tmt(weight, bmi, gender: Literal["man", "woman"] = "man") -> int:
 def calculate_cmt(weight, idmt) -> int:
     cmt = idmt + 0.4 * (weight - idmt)
     return round(cmt, 2)
+
+
+def calculate_asa(bmi, lee_res, flag) -> tuple:
+    asa = "Не определён"
+    extr = "E" if flag else ""
+
+    if bmi >= 35:
+        asa = f"III{extr} класс", "Высокий"
+        if lee_res >= 1:
+            asa = f"IV{extr} класс", "Крайне-высокий"
+    elif bmi >= 30:
+        asa = f"II{extr} класс", "Умеренный"
+        if lee_res == 1:
+            asa = f"III{extr} класс", "Высокий"
+        elif lee_res >= 2:
+            asa = f"IV{extr} класс", "Крайне-высокий"
+    else:
+        asa = f"I{extr} класс", "Низкий" if not extr else "Умеренный"
+        if lee_res >= 2:
+            asa = f"III{extr} класс", "Высокий"
+        elif lee_res == 1:
+            asa = f"II{extr} класс", "Умеренный"
+    return asa

@@ -13,7 +13,8 @@ def show_an_ream_risk():
                 "Риск послеоперационных легочных осложнений",
                 "Риск трудных дыхательных путей",
                 "Риск синдрома обструктивного апноэ сна",
-                "Риск SOBA"
+                "Риск SOBA",
+                "Физический статус пациента",
             ],
             "Интерпретация": [
                 st.session_state.scales["caprini"][1],
@@ -21,7 +22,8 @@ def show_an_ream_risk():
                 f"{st.session_state.scales["ariscat"][1][0]}",
                 st.session_state.scales["elganzouri"][1][1],
                 ["Высокий", "Низкий"][st.session_state.scales["stopbang"] <= 5],
-                ["Низкий", "Высокий"][st.session_state.scales["soba"]]
+                ["Низкий", "Высокий"][st.session_state.scales["soba"]],
+                st.session_state.scales["asa"][1]
             ],
             "Баллы": [
                 st.session_state.scales["caprini"][0],
@@ -29,9 +31,10 @@ def show_an_ream_risk():
                 st.session_state.scales["ariscat"][0],
                 st.session_state.scales["elganzouri"][0],
                 st.session_state.scales["stopbang"],
-                "-"
+                "-",
+                st.session_state.scales["asa"][0]
             ],
-            "Шкала": ["Caprini", "Lee", "ARISCAT", "El Ganzouri", "STOP-BANG", "SOBA"]
+            "Шкала": ["Caprini", "Lee", "Arescat", "El Ganzouri", "STOP-BANG", "SOBA", "ASA"]
         }
 
         # Преобразуем в таблицу

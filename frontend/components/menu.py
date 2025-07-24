@@ -8,9 +8,10 @@ from backend.scales.ariscat import check_ariscat
 from backend.scales.caprini import caprini_score_and_risk
 from backend.scales.el_ganzouri import check_elganzouri
 from backend.scales.index_lee import lee_score_and_risk
-from backend.scales.obesity import calculate_bmi, calculate_idmt, calculate_tmt, calculate_cmt
+from backend.scales.obesity import calculate_bmi, calculate_idmt, calculate_tmt, calculate_cmt, calculate_asa
 from backend.scales.soba_recomendation import is_high_soba_risk, stopbang_score
 from frontend.components.diagnostic import show_diagnostic
+from frontend.components.monitoring import show_monitoring
 from frontend.components.report import show_characteristics_of_body_weight
 from frontend.components.scales import show_an_ream_risk
 from frontend.components.treatment import show_treatment, show_ivl, show_recommendations_pp
@@ -63,6 +64,9 @@ def check_scales():
     tmt = calculate_tmt(st.session_state.patient_data["Вес"], bmi[0], gender)
     cmt = calculate_cmt(st.session_state.patient_data["Вес"], idmt)
 
+    lee_res = lee[0] - st.session_state.patient_data["LEE_Операция"]
+    asa = calculate_asa(bmi[0], lee_res, st.session_state.patient_data["ARISCAT_Экстренная"] != "Нет (0 баллов)")
+
     stopbang = stopbang_score(
         st.session_state.patient_data["STOPBANG_Храп"],
         st.session_state.patient_data["STOPBANG_Сонливость"],
@@ -92,6 +96,7 @@ def check_scales():
     st.session_state["scales"]["cmt"] = cmt
     st.session_state["scales"]["stopbang"] = stopbang
     st.session_state["scales"]["soba"] = soba
+    st.session_state["scales"]["asa"] = asa
 
 
 def show_scales():
@@ -103,11 +108,16 @@ def show_scales():
 
     show_diagnostic()
 
+    show_monitoring()
+
     show_treatment()
 
     show_ivl()
 
     show_recommendations_pp()
+
+    show_button_down()
+
 
 def load_docx():
     patient = st.session_state.patient_data
