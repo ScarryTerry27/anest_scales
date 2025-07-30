@@ -36,9 +36,6 @@ def prev_router():
 def check_scales():
     gender = "man" if st.session_state.patient_data["Пол"] == "Муж" else "woman"
 
-    caprini = caprini_score_and_risk(
-        {k: v for k, v in st.session_state.patient_data.items() if "Caprini" in k}
-    )
     elganzouri = check_elganzouri(
         {k: v for k, v in st.session_state.patient_data.items() if "ElGanzouri" in k}
     )
@@ -64,6 +61,11 @@ def check_scales():
     tmt = calculate_tmt(st.session_state.patient_data["Вес"], bmi[0], gender)
     cmt = calculate_cmt(st.session_state.patient_data["Вес"], idmt)
 
+    caprini = caprini_score_and_risk(
+        {k: v for k, v in st.session_state.patient_data.items() if "Caprini" in k},
+        bmi[0],
+        st.session_state.patient_data["Возраст"]
+    )
     lee_res = lee[0] - st.session_state.patient_data["LEE_Операция"]
     asa = calculate_asa(bmi[0], lee_res, st.session_state.patient_data["ARISCAT_Экстренная"] != "Нет (0 баллов)")
 

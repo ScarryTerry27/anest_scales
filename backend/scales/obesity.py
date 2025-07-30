@@ -21,8 +21,8 @@ def calculate_bmi(height_cm: int, weight_kg: int) -> Tuple[float, str]:
         60.0: "супер-супер ожирение"
     }
     bmi = round(weight_kg / (height_m ** 2), 2)
-    filtered_info = {k: v for k, v in dictionary_info.items() if k > bmi}
-    max_info = min(filtered_info.keys())
+    filtered_info = {k: v for k, v in dictionary_info.items() if k <= bmi}
+    max_info = max(filtered_info.keys()) if filtered_info else 18.5
     return bmi, dictionary_info[max_info]
 
 

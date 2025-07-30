@@ -1,11 +1,12 @@
-def caprini_score_and_risk(caprini_flags: dict) -> tuple[int, str]:
+def caprini_score_and_risk(caprini_flags: dict, bmi: float, age: int) -> tuple[int, str]:
     """
     Расчёт суммы баллов по шкале Caprini и определение уровня риска ВТЭО.
 
+    :param age:
+    :param bmi:
     :param caprini_flags: Словарь вида {ключ: bool}, где ключ — название фактора.
     :return: (сумма баллов, уровень риска как строка)
     """
-
     # Словарь баллов по факторам (ключ должен совпадать с названием флага)
     caprini_weights = {
         # 1 балл
@@ -20,7 +21,6 @@ def caprini_score_and_risk(caprini_flags: dict) -> tuple[int, str]:
         "Caprini_ХСН": 1,
         "Caprini_Постельный": 1,
         "Caprini_ХОБЛ": 1,
-        "Caprini_Онкология": 1,
         "Caprini_Прочее": 1,
 
         # 2 балла
@@ -53,10 +53,18 @@ def caprini_score_and_risk(caprini_flags: dict) -> tuple[int, str]:
     }
 
     score = 0
+    age_dict = {75: 3, 61: 2, 41: 1}
+    for key in sorted(age_dict.keys(), reverse=True):
+        if age >= key:
+            score += age_dict[key]
+            break
+
     for key, value in caprini_flags.items():
         if value and key in caprini_weights:
             score += caprini_weights[key]
 
+    if bmi > 25:
+        score += 1
     # Определение уровня риска
     if score <= 1:
         risk = "Очень низкий"
