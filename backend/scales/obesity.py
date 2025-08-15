@@ -32,7 +32,7 @@ def calculate_idmt(height_cm, gender: Literal["man", "woman"] = "man") -> int:
 
     :param gender Literal["man", "woman"] Пол пациента
     :param height_cm: Рост в сантиметрах"""
-    delta = [100, 105][gender == "man"]
+    delta = [105, 100][gender == "man"]
     return height_cm - delta
 
 
